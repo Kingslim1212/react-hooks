@@ -1,59 +1,83 @@
+// import React, { useState } from 'react';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import MovieList from './MovieList';
+// import MovieDetail from './MovieDetail'; // Create this component separately
+// import Filter from './Filter';
+
+// const App = () => {
+//   const [movies, setMovies] = useState([
+//     {
+//       title: 'Movie 1',
+//       description: 'Description for Movie 1',
+//       posterURL: 'https://example.com/movie1.jpg',
+//       rating: 4.5,
+//       trailerLink: 'https://www.youtube.com/embed/your-trailer-id',
+//     },
+//     // Add more movies as needed
+//   ]);
+
+//   // ... rest of your component code
+
+//   return (
+//     <Router>
+//       <div className="app">
+//         <h1>Movie Collection</h1>
+//         <Filter onFilter={filterMovies} />
+//         <Routes>
+//           <Route path="/" element={<MovieList movies={movies} />} />
+//           <Route path="/movie/:title" element={<MovieDetail movies={movies} />} />
+//         </Routes>
+//       </div>
+//     </Router>
+//   );
+// };
+
+// export default App;
+
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MovieList from './MovieList';
-import Filter from './Filter';
-
-
-
+import MovieDetail from './MovieDetail'; // Ensure this component is created
+import Filter from './Filter'; // Ensure this component is created
 
 const App = () => {
-  const [movies, setMovies] = useState([
+  const initialMovies = [
     {
-      title: 'Inception',
-      description: 'A mind-bending thriller.',
-      posterURL: 'inception_poster.jpg',
-      rating: 4.8,
+      title: 'Movie 1',
+      description: 'Description for Movie 1',
+      posterURL: 'https://example.com/movie1.jpg',
+      rating: 4.5,
+      trailerLink: 'https://www.youtube.com/embed/your-trailer-id',
     },
-    // Add more movies as needed
-  ]);
+    // ... more movies
+  ];
 
-  const [filterTitle, setFilterTitle] = useState('');
-  const [filterRate, setFilterRate] = useState('');
+  const [movies, setMovies] = useState(initialMovies);
+  const [filteredMovies, setFilteredMovies] = useState(initialMovies);
 
-  const handleFilterChange = (type, value) => {
-    if (type === 'title') {
-      setFilterTitle(value);
-    } else if (type === 'rate') {
-      setFilterRate(value);
-    }
+  const filterMovies = (filterCriteria) => {
+    const filtered = movies.filter(movie => {
+      return (filterCriteria.title ? movie.title.includes(filterCriteria.title) : true) &&
+             (filterCriteria.rating ? movie.rating >= filterCriteria.rating : true);
+    });
+    setFilteredMovies(filtered);
   };
 
-  const handleAddMovie = (newMovie) => {
-    setMovies([...movies, newMovie]);
-  };
-
-  const filteredMovies = movies.filter(
-    (movie) =>
-      movie.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
-      (filterRate === '' || movie.rating >= filterRate)
-  );
+  // Rest of your component...
 
   return (
-    <div className="app">
-      <h1>Movie List</h1>
-      <Filter
-        filterTitle={filterTitle}
-        filterRate={filterRate}
-        onFilterChange={handleFilterChange}
-      />
-      <MovieList movies={filteredMovies} />
-      <div>
-        <h2>Add a New Movie</h2>
-        {/* You can add a form to input new movie details */}
-        {/* For simplicity, let's assume a function handleAddMovie exists */}
-        {/* Example: <button onClick={() => handleAddMovie(newMovie)}>Add Movie</button> */}
+    <Router>
+      <div className="app">
+        <h1>Movie Collection</h1>
+        <Filter onFilter={filterMovies} />
+        <Routes>
+          <Route path="/" element={<MovieList movies={filteredMovies} />} />
+          <Route path="/movie/:title" element={<MovieDetail movies={filteredMovies} />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 };
 
 export default App;
+

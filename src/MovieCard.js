@@ -13,4 +13,5 @@ const MovieCard = ({ title, description, posterURL, rating }) => {
   );
 };
 
+
 export default MovieCard;
